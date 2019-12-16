@@ -4,12 +4,14 @@ import 'package:html2md/html2md.dart' as html2md;
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as cTab;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_html_view/html_parser.dart';
 
 class HtmlView extends StatelessWidget {
   final String data;
   final Function onLaunchFail;
   final bool scrollable;
   final EdgeInsets padding;
+  final String apiKeyYoutube;
   Map<String, String> stylingOptions;
   BuildContext ctx;
   MarkdownStyleSheet styleSheet;
@@ -22,11 +24,14 @@ class HtmlView extends StatelessWidget {
       this.onLaunchFail,
       this.scrollable = true,
       this.padding,
-      this.styleSheet = null});
+      this.styleSheet = null,
+      this.apiKeyYoutube});
 
   @override
   Widget build(BuildContext context) {
     ctx = context;
+    HtmlParser htmlParser = new HtmlParser();
+    List<Widget> nodes = htmlParser.HParse(this.data, this.apiKeyYoutube);
     if (scrollable) {
       return Markdown(
         data: _htmlMd(data, stylingOptions),

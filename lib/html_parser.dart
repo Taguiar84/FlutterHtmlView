@@ -13,6 +13,7 @@ class HtmlParser {
   int maxLines;
   String baseUrl;
   Function onLaunchFail;
+  String _apiKey;
 
   HtmlParser({this.baseUrl, this.onLaunchFail, this.overflow, this.maxLines});
 
@@ -96,6 +97,36 @@ class HtmlParser {
     }
 
     List<dom.Element> docBodyChildren = docBody.children;
+    if (docBodyChildren.length > 0)
+      docBodyChildren.forEach((e) => _parseChildren(e, widgetList));
+
+    return widgetList;
+  }
+
+  List<Widget> HParse(String html, String apiKey) {
+    _apiKey = apiKey;
+
+    List<Widget> widgetList = new List();
+
+    dom.Document document = parse(html);
+
+    dom.Element docBody = document.body;
+
+    List<dom.Element> styleElements = docBody.getElementsByTagName("style");
+    List<dom.Element> scriptElements = docBody.getElementsByTagName("script");
+    if (styleElements.length > 0) {
+      for (int i = 0; i < styleElements.length; i++) {
+        docBody.getElementsByTagName("style").first.remove();
+      }
+    }
+    if (scriptElements.length > 0) {
+      for (int i = 0; i < scriptElements.length; i++) {
+        docBody.getElementsByTagName("script").first.remove();
+      }
+    }
+
+    List<dom.Node> docBodyChildren = docBody.nodes;
+
     if (docBodyChildren.length > 0)
       docBodyChildren.forEach((e) => _parseChildren(e, widgetList));
 
